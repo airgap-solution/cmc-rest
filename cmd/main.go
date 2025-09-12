@@ -1,35 +1,26 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net"
 	"net/http"
+	"os"
 
 	"github.com/airgap-solution/cmc-rest/internal/adapter/cmc"
 	servicer "github.com/airgap-solution/cmc-rest/internal/adapter/http"
+	"github.com/airgap-solution/cmc-rest/internal/config"
 	cmcrest "github.com/airgap-solution/cmc-rest/openapi/servergen/go"
 	"github.com/restartfu/coinmarketcap/coinmarketcap"
+	"github.com/restartfu/gophig"
 	"github.com/samber/lo"
 )
 
-func localIP() (string, error) {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return "", err
-	}
-
-	for _, addr := range addrs {
-		if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
-			if ip4 := ipnet.IP.To4(); ip4 != nil {
-				return ip4.String(), nil
-			}
-		}
-	}
-	return "", nil
-}
-
 func main() {
+	configPath, _ := lo.Coalesce(os.Getenv("CONFIG_PATH"), "./config.toml")
+	conf, err := loadConfig(configPath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	cmcAdapter := cmc.NewAdapter(
 		coinmarketcap.CurrencyBTC,
 		coinmarketcap.CurrencyKAS,
@@ -38,12 +29,24 @@ func main() {
 	httpAdapter := servicer.NewAdapter(cmcAdapter)
 	cmcRestServer := cmcrest.NewDefaultAPIController(httpAdapter)
 
-	ip := lo.Must(localIP())
-	log.Printf("Server listening at %s:8083", ip)
-
 	router := cmcrest.NewRouter(cmcRestServer)
-	err := http.ListenAndServe(fmt.Sprintf("%s:8083", ip), router)
+	err = http.ListenAndServe(conf.ListenAddr, router)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func loadConfig(configPath string) (config.Config, error) {
+	defaultConfig := config.DefaultConfig()
+
+	g := gophig.NewGophig[config.Config](configPath, gophig.TOMLMarshaler{}, 0777)
+	conf, err := g.LoadConf()
+	if err != nil {
+		if os.IsNotExist(err) {
+			err = g.SaveConf(defaultConfig)
+			return defaultConfig, err
+		}
+		return config.Config{}, err
+	}
+	return conf, nil
 }

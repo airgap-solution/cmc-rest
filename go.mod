@@ -9,7 +9,11 @@ require (
 )
 
 require (
+	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
+	github.com/pelletier/go-toml/v2 v2.0.7 // indirect
+	github.com/restartfu/gophig v0.0.2 // indirect
 	golang.org/x/text v0.22.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
