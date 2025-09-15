@@ -1,8 +1,10 @@
 openapi: 3.0.3
 info:
   title: CoinMarketCap Rest
-  version: 1.0.0
-  # 1.0.0: Create
+  version: 1.0.1
+  # 1.0.1: Added change24h field and multiple response statuses
+  # 1.0.0: Initial creation
+
 paths:
   /v1/rate/{currency}/{fiat}:
     get:
@@ -20,17 +22,25 @@ paths:
             type: string
       responses:
         "200":
-          description: Rate response
+          description: Rate successfully retrieved
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GetRateResponse"
+        "400":
+          description: Invalid request
+        "500":
+          description: Internal server error
+
 components:
   schemas:
     GetRateResponse:
       type: object
       properties:
         rate:
+          type: number
+          format: double
+        change24h:
           type: number
           format: double
         updated_at:
