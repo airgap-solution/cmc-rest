@@ -3,7 +3,7 @@ module github.com/airgap-solution/cmc-rest
 go 1.25.0
 
 require (
-	github.com/airgap-solution/cmc-rest/openapi v1.0.0
+	github.com/airgap-solution/cmc-rest/openapi v1.0.1
 	github.com/restartfu/coinmarketcap v0.0.0-20250909182121-2431ed5715d8
 	github.com/samber/lo v1.51.0
 )

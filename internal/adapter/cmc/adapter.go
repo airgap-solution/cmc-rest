@@ -44,10 +44,13 @@ func (a *Adapter) pollLoop(currencies []coinmarketcap.Currency) {
 					time.Sleep(5 * time.Second) // avoid tight retry loop
 					continue
 				}
+
+				change24 := details.Price - (details.Price / (1 + details.Price24H/100))
 				a.mu.Lock()
 				a.cache[strings.ToUpper(c.String())] = rateUpdate{
 					rate:     details.Price,
 					updateAt: time.Now(),
+					change24: change24,
 				}
 				a.mu.Unlock()
 			}
@@ -78,8 +81,36 @@ func (a *Adapter) GetCryptoFiatRate(crypto, fiatSymbol string) (float64, time.Ti
 
 	return priceUSD.rate * rate, priceUSD.updateAt, nil
 }
+func (a *Adapter) GetCryptoFiatChange(crypto, fiatSymbol, timeFrame string) (float64, error) {
+	if timeFrame != "24h" {
+		return 0, fmt.Errorf("%s: %w", timeFrame, domain.ErrInvalidTimeFrame)
+	}
+
+	crypto = strings.ToUpper(crypto)
+	fiatSymbol = strings.ToUpper(fiatSymbol)
+
+	fiatCurrency, ok := fiat.BySymbol(fiatSymbol)
+	if !ok {
+		return 0, fmt.Errorf("%s: %w", fiatSymbol, domain.ErrInvalidFiat)
+	}
+
+	a.mu.RLock()
+	entry, ok := a.cache[crypto]
+	a.mu.RUnlock()
+	if !ok {
+		return 0, fmt.Errorf("%s: %w", crypto, domain.ErrRateNotFound)
+	}
+
+	rate, err := a.rateConverter.ConvertRate(fiat.USD, fiatCurrency)
+	if err != nil {
+		return 0, err
+	}
+
+	return entry.change24 * rate, nil
+}
 
 type rateUpdate struct {
 	rate     float64
 	updateAt time.Time
+	change24 float64
 }

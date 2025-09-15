@@ -1,5 +1,7 @@
 github.com/airgap-solution/cmc-rest/openapi v1.0.0 h1:UiJr7EfMexxT08nJDxa6xx7NGoxWl4VtzjoGVzh1GXY=
 github.com/airgap-solution/cmc-rest/openapi v1.0.0/go.mod h1:8M1AuEAH9HCFs2wQfrBmj8dKPKD4erpj/NzLTwDOa9Q=
+github.com/airgap-solution/cmc-rest/openapi v1.0.1 h1:KRvu5CZhKmo4Xa47eT9toP3KJchrwrQkXVQI99f7eTs=
+github.com/airgap-solution/cmc-rest/openapi v1.0.1/go.mod h1:8M1AuEAH9HCFs2wQfrBmj8dKPKD4erpj/NzLTwDOa9Q=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/goccy/go-json v0.10.2 h1:CrxCmQqYDkv1z7lO7Wbh2HN93uovUHgrECaO5ZrCXAU=
