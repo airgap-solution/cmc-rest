@@ -20,8 +20,13 @@ func (a *Adapter) V1RateCurrencyFiatGet(_ context.Context, from string, to strin
 	if err != nil {
 		return cmcrest.Response(500, nil), err
 	}
+	change24h, err := a.cmcAdapter.GetCryptoFiatChange(from, to, "24h")
+	if err != nil {
+		return cmcrest.Response(500, nil), err
+	}
 	return cmcrest.Response(200, cmcrest.GetRateResponse{
 		Rate:      rate,
 		UpdatedAt: updatedAt,
+		Change24h: change24h,
 	}), nil
 }

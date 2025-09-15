@@ -87,8 +87,6 @@ func (a *Adapter) GetCryptoFiatChange(crypto, fiatSymbol, timeFrame string) (flo
 	}
 
 	crypto = strings.ToUpper(crypto)
-	fiatSymbol = strings.ToUpper(fiatSymbol)
-
 	fiatCurrency, ok := fiat.BySymbol(fiatSymbol)
 	if !ok {
 		return 0, fmt.Errorf("%s: %w", fiatSymbol, domain.ErrInvalidFiat)
@@ -96,6 +94,7 @@ func (a *Adapter) GetCryptoFiatChange(crypto, fiatSymbol, timeFrame string) (flo
 
 	a.mu.RLock()
 	entry, ok := a.cache[crypto]
+	fmt.Println(a.cache)
 	a.mu.RUnlock()
 	if !ok {
 		return 0, fmt.Errorf("%s: %w", crypto, domain.ErrRateNotFound)
