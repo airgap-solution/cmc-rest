@@ -30,7 +30,11 @@ func main() {
 	cmcRestServer := cmcrest.NewDefaultAPIController(httpAdapter)
 
 	router := cmcrest.NewRouter(cmcRestServer)
-	err = http.ListenAndServe(conf.ListenAddr, router)
+	if conf.TLSEnabled {
+		err = http.ListenAndServeTLS(conf.ListenAddr, conf.TLSConfig.CertificatePath, conf.TLSConfig.PrivateKeyPath, router)
+	} else {
+		err = http.ListenAndServe(conf.ListenAddr, router)
+	}
 	if err != nil {
 		log.Fatalln(err)
 	}
