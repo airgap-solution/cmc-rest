@@ -11,7 +11,7 @@ type Config struct {
 
 func DefaultConfig() Config {
 	cfg := Config{
-		ListenAddr: "restartfu.com:8987",
+		ListenAddr: "restartfu.com:8765",
 		TLSEnabled: true,
 	}
 
